@@ -12,7 +12,7 @@
 2. run `ngrok http 7388` from terminal.
 3. In the `application.properties` file, add
         `server.port=7388`
-
+        `spring.data.mongodb.uri=<your_uri_with_database_name_included>`
 
 
 ## API Reference
