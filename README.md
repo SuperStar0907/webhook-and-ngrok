@@ -4,8 +4,6 @@
 1. Using ngrok for opening a local port to listen for the post request from the Webhook subscription of PagerDuty.
 2. Using MongoDB atlas to store the data from the payload received.
 
-
-
 ## Deployment
 
 1. Download `ngrok` and add it to `/usr/bin`. 

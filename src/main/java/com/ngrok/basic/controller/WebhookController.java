@@ -4,9 +4,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.ngrok.basic.model.Event;
+import com.ngrok.basic.service.EventService;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -14,19 +15,27 @@ import org.springframework.web.bind.annotation.RestController;
 public class WebhookController {
 
     private final MongoTemplate mongoTemplate;
+    private final EventService eventService;
 
-    public WebhookController(MongoTemplate mongoTemplate) {
+    public WebhookController(MongoTemplate mongoTemplate, EventService eventService) {
         this.mongoTemplate = mongoTemplate;
+        this.eventService = eventService;
     }
 
     @PostMapping("pd-webhook")
-    public ResponseEntity<String> getWebhook(@RequestBody Object payload) throws JsonProcessingException {
-        mongoTemplate.save(payload,"webhookPayloads");
-        return ResponseEntity.ok("Webhook received successfully");
+    public ResponseEntity<String> getWebhook(@RequestBody JsonNode payload) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode eventNode = payload.get("event");
+        Event event = objectMapper.convertValue(eventNode, Event.class);
+        Event savedEvent = eventService.saveEvent(event);
+        return ResponseEntity.ok("Event saved with ID: " + savedEvent.getId());
+
+        // For using the MongoTemplate change the payload datatype to Object.
+            // mongoTemplate.save(payload,"webhookPayloads");
+            // return ResponseEntity.ok("Webhook received successfully");
 
         // To analyse the structure of the document
-        //        analyzeDocumentStructure(payload);
-
+            // analyzeDocumentStructure(payload);
     }
 
     private void analyzeDocumentStructure(JsonNode payload) {
