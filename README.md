@@ -15,7 +15,7 @@
 
 ## API Reference
 
-#### Get all items
+#### Listening for the webhook
 
 ```http
   POST /pd-webhook
